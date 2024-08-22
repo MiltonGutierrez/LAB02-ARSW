@@ -47,11 +47,11 @@ public class PrimeFinderThread extends Thread{
 			while(System.currentTimeMillis() < end ){
 				if (isPrime(a)){
 					primes.add(a);
-					//System.out.println(a);
-					System.out.println(System.currentTimeMillis());
+					System.out.println(a);
 				}
 				a++;
 			}	
+			primes.wait();
 		}
 	}
 }

@@ -15,22 +15,19 @@ public class Main {
 		pft1.start();
 		pft2.start();
 
-		/*Scanner readinput = new Scanner(System.in);
+		Scanner readinput = new Scanner(System.in);
 		System.out.println("Presione ENTER para continuar");
 		readinput.nextLine();
 
 		while(true){
-			if(readinput.equals("aa")){
-				pft0.notify();
-				pft1.notify();
-				pft2.notify();
+			if(true){
 				System.out.println("hola");
+				primes.notifyAll();
 			}
 			else{
-				System.out.println("Presione ENTER para continuar");
-				readinput.nextLine();
+
 			}
-		}*/
+		}
 	}
 	
 }
