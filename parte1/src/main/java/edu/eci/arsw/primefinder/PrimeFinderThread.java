@@ -3,30 +3,45 @@ package edu.eci.arsw.primefinder;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 public class PrimeFinderThread extends Thread{
 
 	
 	int a,b;
+	Boolean running;
+	private List<Integer> primes=new LinkedList<Integer>();
 	
-	private List<Integer> primes;
-	
-	public PrimeFinderThread(int a, int b, LinkedList<Integer> primes) {
+	public PrimeFinderThread(int a, int b) {
 		super();
 		this.a = a;
 		this.b = b;
-		this.primes = primes;
 	}
 
+	@Override
 	public void run(){
 		while(true){
-			try {
-				wating();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			long actualTime= System.currentTimeMillis();
+			long endTime = actualTime+5000;
+			synchronized(this){
+			while(System.currentTimeMillis() >= endTime){
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-		}	
+			while(endTime > actualTime){
+				if (isPrime(a)){
+					primes.add(a);
+					System.out.println(a);
+				}
+				a++;
+			}
+			}
+		}
 	}
-	
+
 	boolean isPrime(int n) {
 	    if (n%2==0) return false;
 	    for(int i=3;i*i<=n;i+=2) {
@@ -39,19 +54,12 @@ public class PrimeFinderThread extends Thread{
 	public List<Integer> getPrimes() {
 		return primes;
 	}
-	
-	private void wating() throws InterruptedException{
-		synchronized (primes){
-			long t= System.currentTimeMillis();
-			long end = t+5000;
-			while(System.currentTimeMillis() < end ){
-				if (isPrime(a)){
-					primes.add(a);
-					System.out.println(a);
-				}
-				a++;
-			}	
-			primes.wait();
-		}
+
+	public void resumeThread(){
+		notify();
 	}
 }
+
+
+
+

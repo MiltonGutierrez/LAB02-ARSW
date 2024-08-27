@@ -6,28 +6,35 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String[] args) {
-
+		Boolean running = true;
 		LinkedList<Integer> primes = new LinkedList<>();
-		PrimeFinderThread pft0=new PrimeFinderThread(0, 10000000, primes);
-		PrimeFinderThread pft1=new PrimeFinderThread(10000001, 20000000, primes);
-		PrimeFinderThread pft2=new PrimeFinderThread(20000001, 30000000, primes);
-		pft0.start();
-		pft1.start();
-		pft2.start();
 
-		Scanner readinput = new Scanner(System.in);
-		System.out.println("Presione ENTER para continuar");
-		readinput.nextLine();
+		PrimeFinderThread pft0=new PrimeFinderThread(0, 10000000);
+		PrimeFinderThread pft1=new PrimeFinderThread(10000001, 20000000);
+		PrimeFinderThread pft2=new PrimeFinderThread(20000001, 30000000);
 
+		PrimeFinderThread[] threads = {pft0, pft1, pft2};
 		while(true){
-			if(true){
-				System.out.println("hola");
-				primes.notifyAll();
+			for(PrimeFinderThread pt: threads){
+				if(!pt.isAlive()){
+					pt.start();
+				}
+				else{
+					pt.resumeThread();
+				}
 			}
-			else{
 
+			Scanner readinput = new Scanner(System.in);
+			System.out.println("Presione ENTER para continuar");
+			String input = readinput.nextLine();
+
+			while(!input.equals("")){
+				System.out.println("Presione ENTER para continuar");
+				input = readinput.nextLine();
 			}
 		}
+
 	}
-	
 }
+
+ 
