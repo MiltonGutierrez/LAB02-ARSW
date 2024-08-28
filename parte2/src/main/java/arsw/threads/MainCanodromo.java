@@ -19,6 +19,8 @@ public class MainCanodromo {
         can.setVisible(true);
 
         //Acción del botón start
+
+        
         can.setStartAction(
                 new ActionListener() {
 
@@ -37,6 +39,16 @@ public class MainCanodromo {
                                     //inicia los hilos
                                     galgos[i].start();
 
+                                }
+                                //intento de que espere a que termine cada galgo
+
+                                for(Galgo g: galgos){
+                                    try {
+                                        g.join();
+                                    } catch (Exception e) {
+                                        // TODO: handle exception
+                                    }
+                                    
                                 }
                                
 				can.winnerDialog(reg.getGanador(),reg.getUltimaPosicionAlcanzada() - 1); 
