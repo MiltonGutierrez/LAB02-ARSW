@@ -9,23 +9,35 @@ public class PrimeFinderThread extends Thread{
 	int a,b;
 	
 	private List<Integer> primes;
+	private boolean running = true;;
 	
-	public PrimeFinderThread(int a, int b, LinkedList<Integer> primes) {
+	public PrimeFinderThread(int a, int b) {
 		super();
 		this.a = a;
 		this.b = b;
-		this.primes = primes;
+		this.primes = new LinkedList<>();
 	}
 
 	public void run(){
-		while(true){
-			try {
-				wating();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		while (a <= b){
+				if(running){
+					if (isPrime(a)){
+						primes.add(a);
+					}				
+					a++;
+				}
+				else{
+					synchronized(this){
+						try {
+							wait();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
 		}	
 	}
+		
 	
 	boolean isPrime(int n) {
 	    if (n%2==0) return false;
@@ -37,21 +49,29 @@ public class PrimeFinderThread extends Thread{
 	}
 
 	public List<Integer> getPrimes() {
-		return primes;
+		synchronized(primes){
+			return primes;
+		}
+		
 	}
 	
-	private void wating() throws InterruptedException{
-		synchronized (primes){
-			long t= System.currentTimeMillis();
-			long end = t+5000;
-			while(System.currentTimeMillis() < end ){
-				if (isPrime(a)){
-					primes.add(a);
-					System.out.println(a);
-				}
-				a++;
-			}	
-			primes.wait();
+	public int getA(){
+		return a;
+	}
+
+	public int getB(){
+		return b;
+	}
+
+	public void startRunning(){
+		running = true;
+		synchronized(this){
+			notify();
 		}
 	}
+
+	public void stopRunning(){
+		running = false;
+	}
+		
 }
