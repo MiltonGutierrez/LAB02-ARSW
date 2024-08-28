@@ -25,7 +25,24 @@ Creación, puesta en marcha y coordinación de hilos.
 
 3. Modifique el programa para que, en lugar de resolver el problema con un solo hilo, lo haga con tres, donde cada uno de éstos hará la tarcera parte del problema original. Verifique nuevamente el funcionamiento, y nuevamente revise el uso de los núcleos del equipo.
 
-4. Lo que se le ha pedido es: debe modificar la aplicación de manera que cuando hayan transcurrido 5 segundos desde que se inició la ejecución, se detengan todos los hilos y se muestre el número de primos encontrados hasta el momento. Luego, se debe esperar a que el usuario presione ENTER para reanudar la ejecución de los mismo.
+   Para este punto simplemente se hizo la creación de otros 3 threads adicionales, a los cuales se les dividio la cantidad de trabajo como se muestra en la siguiente imagen.
+       <p align="center">
+	   <img src="img/screenshots/Punto1Main2.png" alt="Main2" width="700px">
+	</p>
+
+   Para poder hacer la comparación correctamente, se observara el uso de los núcleos antes y después de la ejecución del nuevo código:
+
+   **ANTES**
+      <p align="center">
+	   <img src="img/screenshots/NucleosAntesDeLaEjecucion2.png" alt="NucleosDespues" width="700px">
+	</p>
+
+   **DESPUÉS**
+      <p align="center">
+	   <img src="img/screenshots/NucleosDespuesDeLaEjecucion2.png" alt="NucleosDespues" width="700px">
+	</p>
+
+5. Lo que se le ha pedido es: debe modificar la aplicación de manera que cuando hayan transcurrido 5 segundos desde que se inició la ejecución, se detengan todos los hilos y se muestre el número de primos encontrados hasta el momento. Luego, se debe esperar a que el usuario presione ENTER para reanudar la ejecución de los mismo.
 
 
 
