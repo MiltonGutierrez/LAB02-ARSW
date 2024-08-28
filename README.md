@@ -42,10 +42,34 @@ Creación, puesta en marcha y coordinación de hilos.
 	   <img src="img/screenshots/NucleosDespuesDeLaEjecucion2.png" alt="NucleosDespues" width="700px">
 	</p>
 
-5. Lo que se le ha pedido es: debe modificar la aplicación de manera que cuando hayan transcurrido 5 segundos desde que se inició la ejecución, se detengan todos los hilos y se muestre el número de primos encontrados hasta el momento. Luego, se debe esperar a que el usuario presione ENTER para reanudar la ejecución de los mismo.
+3. Lo que se le ha pedido es: debe modificar la aplicación de manera que cuando hayan transcurrido 5 segundos desde que se inició la ejecución, se detengan todos los hilos y se muestre el número de primos encontrados hasta el momento. Luego, se debe esperar a que el usuario presione ENTER para reanudar la ejecución de los mismo. 
 
+   Para esto inicialmente guardamos los 3 PrimeFinderThreads en un arreglo, de tal manera que podamos acceder a ellos de manera más sencilla con el uso de For, iniciamos cada uno de los treads, y posteriormente a esto para poder controlar la ejecución de estos, utilizamos un ciclo que se ejecutara hasta que running sea false (running será true siempre que haya un thread vivo). Esperamos los 5 segundos de ejecución para con el ciclo For parar cada uno de los Threads con el método implementado *stopRunning*. Una vez parados, se contara los primos que se han encontrado hasta el momento.
+      <p align="center">
+	   <img src="img/screenshots/Punto3Main1.png" alt="Main" width="700px">
+	</p>
 
+Para la continuación de la ejecución se pide que el usuario presione enter, se le asigna el valor de false a la variable running, si existe algún thread que siga vivo (no haya terminado su ejecución) se le dará el valor de true para que continue, esto con el método startRunning(). Finalmente cuando se termine la ejecución del ciclo en Main, se mostrará la cantidad final y total de primos encontrados.
+      <p align="center">
+	   <img src="img/screenshots/Punto3Main3.png" alt="Main" width="700px">
+	</p>
 
+Ahora explicaremos como se implementaron los métodos, *run()*, *startRunnin()* y *stopRunning()* 
+
+- **run()**
+        <p align="center">
+	   <img src="img/screenshots/Punto3PThreads2.png" alt="Run" width="700px">
+	</p>
+El ciclo se ejecutará hasta que se calcule todo el rango de números, si la variable booleana *running* es true (está es unica para cada thread), se hara el calculo de si es primo o no, de lo contrario, en un bloque sincronizado (utilizando el thread mismo como objeto) haremos que pare, esto hasta que el thread llame a notify como se mostrara en los siguiente metodos. 
+
+- **startRunning()** y **stopRunning()**
+        <p align="center">
+	   <img src="img/screenshots/Punto3PThreads1.png" alt="Run" width="700px">
+	</p>
+
+Como observamos el método *startRunning()* nos cambia la variable *running* a true, y además hace que el thread se llame a sí mismo para que continue con la ejecución, esto hara que continue buscando números primos, por el otro lado *stopRunning()* simplemente cambiará el valor de la variable *running* a false, de manera que cuando vuelva a ejecutar el ciclo en *run()*, el thread se pare a si mismo. 
+
+ 
 #####Parte II 
 
 
