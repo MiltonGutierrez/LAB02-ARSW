@@ -9,7 +9,7 @@ public class PrimeFinderThread extends Thread{
 
 	
 	int a,b;
-	Boolean running;
+	boolean running = true;
 	private List<Integer> primes=new LinkedList<Integer>();
 	
 	public PrimeFinderThread(int a, int b) {
@@ -20,24 +20,23 @@ public class PrimeFinderThread extends Thread{
 
 	@Override
 	public void run(){
-		while(true){
-			long actualTime= System.currentTimeMillis();
-			long endTime = actualTime+5000;
-			synchronized(this){
-			while(System.currentTimeMillis() >= endTime){
-				try {
-					wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+		for(int i = a; a < b; a++){
+			if(running){
+				if(isPrime(i)){
+					primes.add(i);
 				}
+
 			}
-			while(endTime > actualTime){
-				if (isPrime(a)){
-					primes.add(a);
-					System.out.println(a);
+			else{
+				synchronized(primes){
+					while(!running){
+						try {
+							primes.wait();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}		
+					}
 				}
-				a++;
-			}
 			}
 		}
 	}
@@ -52,11 +51,19 @@ public class PrimeFinderThread extends Thread{
 	}
 
 	public List<Integer> getPrimes() {
-		return primes;
+		synchronized(primes){
+			return primes;
+		}
+		
 	}
 
-	public void resumeThread(){
-		notify();
+	public void setRunningState(boolean running){
+		this.running = running;
+		if(running == true){
+			synchronized(primes){
+				primes.notify();
+			}
+		}
 	}
 }
 

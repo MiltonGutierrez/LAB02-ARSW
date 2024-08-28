@@ -10,30 +10,48 @@ public class Main {
 		LinkedList<Integer> primes = new LinkedList<>();
 
 		PrimeFinderThread pft0=new PrimeFinderThread(0, 10000000);
-		PrimeFinderThread pft1=new PrimeFinderThread(10000001, 20000000);
-		PrimeFinderThread pft2=new PrimeFinderThread(20000001, 30000000);
+		PrimeFinderThread pft1=new PrimeFinderThread(10000000, 20000000);
+		PrimeFinderThread pft2=new PrimeFinderThread(20000000, 30000000);
 
 		PrimeFinderThread[] threads = {pft0, pft1, pft2};
-		while(true){
-			for(PrimeFinderThread pt: threads){
-				if(!pt.isAlive()){
-					pt.start();
-				}
-				else{
-					pt.resumeThread();
-				}
-			}
 
-			Scanner readinput = new Scanner(System.in);
-			System.out.println("Presione ENTER para continuar");
-			String input = readinput.nextLine();
+		int primesFound = 0;
 
-			while(!input.equals("")){
-				System.out.println("Presione ENTER para continuar");
-				input = readinput.nextLine();
-			}
+
+		for(PrimeFinderThread pt: threads){
+			pt.start();
 		}
 
+		while(true){
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			for(PrimeFinderThread pt: threads){
+				pt.setRunningState(false);
+				primesFound += pt.getPrimes().size();
+			}
+
+			System.out.println("Primos encontrados: " + primesFound);
+
+			Scanner input = new Scanner(System.in);
+			System.out.println("Presione ENTER para continar:");
+			input.nextLine();
+
+			running = false;
+
+			for(PrimeFinderThread pt: threads){
+				if(pt.isAlive()){
+					running = true;
+				}
+			}
+
+			
+			
+		}
+		
 	}
 }
 
