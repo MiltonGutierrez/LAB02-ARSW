@@ -58,14 +58,6 @@ public class PrimeFinderThread extends Thread{
 		
 	}
 	
-	public int getA(){
-		return a;
-	}
-
-	public int getB(){
-		return b;
-	}
-
 	public void startRunning(){
 		running = true;
 		synchronized(this){
