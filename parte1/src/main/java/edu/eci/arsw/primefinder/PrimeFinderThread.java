@@ -9,38 +9,39 @@ public class PrimeFinderThread extends Thread{
 
 	
 	int a,b;
-	boolean running = true;
-	private List<Integer> primes=new LinkedList<Integer>();
+	
+	private List<Integer> primes;
+	private boolean running = true;
 	
 	public PrimeFinderThread(int a, int b) {
 		super();
 		this.a = a;
 		this.b = b;
+		this.primes = new LinkedList<>();
 	}
 
 	@Override
 	public void run(){
-		for(int i = a; a < b; a++){
-			if(running){
-				if(isPrime(i)){
-					primes.add(i);
+		while (a <= b){
+				if(running){
+					if (isPrime(a)){
+						primes.add(a);
+					}				
+					a++;
 				}
-
-			}
-			else{
-				synchronized(primes){
-					while(!running){
+				else{
+					synchronized(this){
 						try {
-							primes.wait();
+							wait();
 						} catch (Exception e) {
 							e.printStackTrace();
-						}		
+						}
 					}
 				}
-			}
-		}
+		}	
 	}
-
+		
+	
 	boolean isPrime(int n) {
 	    if (n%2==0) return false;
 	    for(int i=3;i*i<=n;i+=2) {
@@ -56,15 +57,26 @@ public class PrimeFinderThread extends Thread{
 		}
 		
 	}
+	
+	public int getA(){
+		return a;
+	}
 
-	public void setRunningState(boolean running){
-		this.running = running;
-		if(running == true){
-			synchronized(primes){
-				primes.notify();
-			}
+	public int getB(){
+		return b;
+	}
+
+	public void startRunning(){
+		running = true;
+		synchronized(this){
+			notify();
 		}
 	}
+
+	public void stopRunning(){
+		running = false;
+	}
+		
 }
 
 
