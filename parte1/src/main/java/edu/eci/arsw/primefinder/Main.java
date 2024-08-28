@@ -49,24 +49,7 @@ public class Main {
 					running = true;
 					pt.startRunning();
 				}
-			}
-
-			System.out.println("Primos encontrados: " + primesFound);
-
-			Scanner input = new Scanner(System.in);
-			System.out.println("Presione ENTER para continar:");
-			input.nextLine();
-
-			running = false;
-
-			for(PrimeFinderThread pt: threads){
-				if(pt.isAlive()){
-					running = true;
-				}
-			}
-
-			
-			
+			}		
 		}
 
 		for(PrimeFinderThread pt: threads){
