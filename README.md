@@ -88,32 +88,97 @@ logre tomar el ‘1’ será el ganador.
 
 Al iniciar la aplicación, hay un primer error evidente: los resultados (total recorrido y número del galgo ganador) son mostrados antes de que finalice la carrera como tal. Sin embargo, es posible que una vez corregido esto, haya más inconsistencias causadas por la presencia de condiciones de carrera.
 
-Taller.
+### Taller.
 
-1.  Corrija la aplicación para que el aviso de resultados se muestre
-    sólo cuando la ejecución de todos los hilos ‘galgo’ haya finalizado.
-    Para esto tenga en cuenta:
+#### 1.  Corrija la aplicación para que el aviso de resultados se muestre sólo cuando la ejecución de todos los hilos ‘galgo’ haya finalizado. Para esto tenga en cuenta:
 
-    a.  La acción de iniciar la carrera y mostrar los resultados se realiza a partir de la línea 38 de MainCanodromo.
+###### a.  La acción de iniciar la carrera y mostrar los resultados se realiza a partir de la línea 38 de MainCanodromo.
 
-    b.  Puede utilizarse el método join() de la clase Thread para sincronizar el hilo que inicia la carrera, con la finalización de los hilos de los galgos.
+- Después de crear los hilos, el método `start()` se llama en cada objeto del galgo. Esto inicia la ejecución concurrente de cada hilo, es decir, comienza la carrera de cada galgo en paralelo.
+<p align="center">
+<img src="img/screenshots/parte2/1_a.png" alt="solución punto 1 a" width="800px">
+</p>
 
-2.  Una vez corregido el problema inicial, corra la aplicación varias
-    veces, e identifique las inconsistencias en los resultados de las
-    mismas viendo el ‘ranking’ mostrado en consola (algunas veces
-    podrían salir resultados válidos, pero en otros se pueden presentar
-    dichas inconsistencias). A partir de esto, identifique las regiones
-    críticas () del programa.
+###### b.  Puede utilizarse el método join() de la clase Thread para sincronizar el hilo que inicia la carrera, con la finalización de los hilos de los galgos.
+    
+- Por medio del ciclo `for ` se logra recorrer todos los hilos de los galgos.
+    
 
-3.  Utilice un mecanismo de sincronización para garantizar que a dichas
-    regiones críticas sólo acceda un hilo a la vez. Verifique los
-    resultados.
+- `can.getNumCarriles()` nos suministra el numero de carriles en la carrera.
+    
+
+- Dentro del bucle, `galgos[i].join()` se asegura de que el hilo principal, es decir el primer hilo que comienza la carrera, espere hasta que cada hilo del carril termine su ejecución.
+
+
+- Se incluye la excepción `System.out.println(ee.getMessage() ` en el caso de que el hilo que está esperando  es solicitado por otra parte del código, entonces se lanzará el mensaje de la excepción.
+  <p align="center">
+  <img src="img/screenshots/parte2/1_b.png" alt="solución punto 1 b" width="800px">
+  </p>
+
+#### 2.  Una vez corregido el problema inicial, corra la aplicación varias veces, e identifique las inconsistencias en los resultados de las mismas viendo el ‘ranking’ mostrado en consola (algunas veces podrían salir resultados válidos, pero en otros se pueden presentar dichas inconsistencias). A partir de esto, identifique las regiones críticas () del programa.
+1) Observamos algunas inconsistencias, como cuando varios galgos llegan simultáneamente a la primera posición, pero solo uno es mostrado como el ganador. Esto sugiere que puede haber problemas en la forma en que se determina y se muestra al galgo ganador, posiblemente debido a la falta de sincronización adecuada en la sección crítica.
+<p align="center">
+<img src="img/screenshots/parte2/Inconsistencia1.png" alt="solución punto 1 b" width="800px">
+</p>
+
+
+2)  Se observan múltiples llegadas en la misma posición (2), cuando en realidad se espera que cada hilo llegue a una posición distinta para evitar condiciones de carrera.
+<p align="center">
+<img src="img/screenshots/parte2/Inconsistencia2png.png" alt="solución punto 1 b" width="800px">
+</p>
+
+
+En consecuencia se identifican las siguientes regiones críticas, que son las funciones en donde el programa enfrenta conflictos al seleccionar al ganador y obtener la posicion de llegada (única).
+<p align="center">
+<img src="img/screenshots/parte2/regioncritica1.png" alt="solución punto 1 b" width="800px">
+</p>
+
+#### 3.  Utilice un mecanismo de sincronización para garantizar que a dichas regiones críticas sólo acceda un hilo a la vez. Verifique los resultados.
+
+- La implementación del mecanismo  `synchronized(this)` en la sección crítica previene las condiciones de carrera asegurando que solo un hilo pueda acceder a esta región en un momento dado. 
+solucionando el problema de las llegadas simultáneas en la misma posición 
+y garantizando que la selección del ganador sea precisa y libre de interferencias concurrentes.
+<p align="center">
+<img src="img/screenshots/parte2/3.png" alt="solución punto 1 b" width="800px">
+</p>
+
+Con la implementacion anterior obtenemos la siguiente salida.
+<p align="center">
+<img src="img/screenshots/parte2/3final.png" alt="solución punto 1 b" width="800px">
+</p>
 
 4.  Implemente las funcionalidades de pausa y continuar. Con estas,
     cuando se haga clic en ‘Stop’, todos los hilos de los galgos
     deberían dormirse, y cuando se haga clic en ‘Continue’ los mismos
     deberían despertarse y continuar con la carrera. Diseñe una solución que permita hacer esto utilizando los mecanismos de sincronización con las primitivas de los Locks provistos por el lenguaje (wait y notifyAll).
 
+- Se deben usar las funciones de espera `wait` y `notifyAll.` 
+En la implementación, cuando se hace clic en el botón 'Stop', el método asociado 
+con el evento de clic en `can.setStopAction` pausa todos los hilos de los 
+galgos. Esto se logra bloqueando el objeto `reg` y llamando al método
+  `stop(true)` en cada hilo Galgo, lo que hace que cada hilo entre en un 
+estado de espera. Durante este estado, los hilos se detendrán y no 
+continuarán su ejecución hasta que se les indique lo contrario.
+
+<p align="center">
+<img src="img/screenshots/parte2/4.png" alt="solución punto 4 " width="800px">
+</p>
+
+- Por otro lado, al hacer clic en el botón 'Continue', el método asociado
+con `can.setContinueAction` reanuda la ejecución de los hilos. 
+Se bloquea el objeto `reg` y se llama al método `stop(false)` en cada 
+hilo, indicando que los hilos deben continuar su ejecución. Luego, se 
+llama a `notifyAll()` en el objeto reg para despertar a todos los 
+hilos que estaban esperando. Esto permite que los hilos se reanuden y 
+continúen la carrera desde donde se detuvieron.
+<p align="center">
+<img src="img/screenshots/parte2/4.1.png" alt="solución punto 4 " width="800px">
+</p>
+
+Logrando asi pausar y continuar de una manera eficiente según lo explicado anteriormente.
+<p align="center">
+<img src="img/screenshots/parte2/final.png" alt="solución punto 4 " width="800px">
+</p>
 
 ## Criterios de evaluación
 

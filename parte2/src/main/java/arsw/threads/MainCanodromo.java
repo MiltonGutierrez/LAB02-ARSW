@@ -41,12 +41,12 @@ public class MainCanodromo {
 
                                 }
                                 //intento de que espere a que termine cada galgo
-
-                                for(Galgo g: galgos){
+                                //usando el metodo Join hacemos que el hilo 'principal' sea el último en finalizar.
+                                for(int i=0; i<can.getNumCarriles(); i++){
                                     try {
-                                        g.join();
-                                    } catch (Exception e) {
-                                        // TODO: handle exception
+                                        galgos[i].join();
+                                    } catch (InterruptedException ee) {
+                                        System.out.println(ee.getMessage());
                                     }
                                     
                                 }
@@ -64,7 +64,13 @@ public class MainCanodromo {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println("Carrera pausada!");
+                        synchronized (reg) {
+                            for (Galgo galgo : galgos) {
+                                galgo.stop(true);
+
+                            }
+                            System.out.println("Carrera pausada!");
+                        }
                     }
                 }
         );
@@ -73,11 +79,18 @@ public class MainCanodromo {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        System.out.println("Carrera reanudada!");
+                        synchronized(reg) {
+                            for (Galgo galgo : galgos){
+                                galgo.stop(false);
+                            }
+                            reg.notifyAll();
+                            System.out.println("Carrera reanudada!");
+                        }
                     }
                 }
+
         );
 
     }
-
 }
+
